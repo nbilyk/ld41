@@ -20,6 +20,10 @@ import ld41.model.TargetVo
 
 val targets: List<TargetVo> = listOf(
 		TargetVo(
+				"dummy",
+				"Dummy McDummerson"
+		),
+		TargetVo(
 				"jeff",
 				"Jeff TBD esy"
 		),

@@ -152,7 +152,8 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		// TODO: TEMP cheat codes
 		keyDown().add {
 			if (it.keyCode == Ascii.J && it.ctrlKey) {
-				invokeCommand(HuntCommand("joe"))
+				it.preventDefault()
+				invokeCommand(HuntCommand("dummy"))
 			}
 		}
 	}
