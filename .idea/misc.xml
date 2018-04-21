@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="IdProvider" IDEtalkID="21514F836175763424C505288F413242" />
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$ACORNUI_HOME$/AcornUtils/jsSrc/Alias.kt" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" default="false" project-jdk-name="10.0.1" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out/jvm" />
+  </component>
+</project>

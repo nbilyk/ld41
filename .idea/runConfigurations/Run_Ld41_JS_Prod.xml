@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Ld41 JS Prod" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="false" uri="http://localhost:63342/Ld41/Ld41Js/wwwDist/index.html">
+    <method>
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Deploy JS" run_configuration_type="JetRunConfigurationType" />
+    </method>
+  </configuration>
+</component>

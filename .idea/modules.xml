@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$ACORNUI_HOME$/AcornGame/AcornGame.iml" filepath="$ACORNUI_HOME$/AcornGame/AcornGame.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/AcornSpine/AcornSpine.iml" filepath="$ACORNUI_HOME$/AcornSpine/AcornSpine.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/Tools/AcornTexturePacker/core/AcornTexturePackerCore.iml" filepath="$ACORNUI_HOME$/Tools/AcornTexturePacker/core/AcornTexturePackerCore.iml" group="AcornUi/Tools/TexturePacker" />
+      <module fileurl="file://$ACORNUI_HOME$/Tools/AcornTexturePacker/jvm/AcornTexturePackerJvm.iml" filepath="$ACORNUI_HOME$/Tools/AcornTexturePacker/jvm/AcornTexturePackerJvm.iml" group="AcornUi/Tools/TexturePacker" />
+      <module fileurl="file://$ACORNUI_HOME$/AcornUiCore/AcornUiCore.iml" filepath="$ACORNUI_HOME$/AcornUiCore/AcornUiCore.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/AcornUiJsBackend/AcornUiJsBackend.iml" filepath="$ACORNUI_HOME$/AcornUiJsBackend/AcornUiJsBackend.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/AcornUiLwjglBackend/AcornUiLwjglBackend.iml" filepath="$ACORNUI_HOME$/AcornUiLwjglBackend/AcornUiLwjglBackend.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/AcornUtils/AcornUtils.iml" filepath="$ACORNUI_HOME$/AcornUtils/AcornUtils.iml" group="AcornUi" />
+      <module fileurl="file://$ACORNUI_HOME$/Tools/BuildTasks/BuildTasks.iml" filepath="$ACORNUI_HOME$/Tools/BuildTasks/BuildTasks.iml" group="AcornUi/Tools" />
+      <module fileurl="file://$PROJECT_DIR$/build/Ld41Build.iml" filepath="$PROJECT_DIR$/build/Ld41Build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Shell/core/Ld41Core.iml" filepath="$PROJECT_DIR$/Shell/core/Ld41Core.iml" group="Ld41Shell" />
+      <module fileurl="file://$PROJECT_DIR$/Shell/js/Ld41Js.iml" filepath="$PROJECT_DIR$/Shell/js/Ld41Js.iml" group="Ld41Shell" />
+      <module fileurl="file://$PROJECT_DIR$/Shell/jvm/Ld41Jvm.iml" filepath="$PROJECT_DIR$/Shell/jvm/Ld41Jvm.iml" group="Ld41Shell" />
+    </modules>
+  </component>
+</project>

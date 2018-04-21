@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/Shell/core/resources/assets/res/datagrid.properties" />
+      <file value="file://$PROJECT_DIR$/Shell/core/resources/assets/res/datagrid_de-DE.properties" />
+      <file value="file://$PROJECT_DIR$/Shell/core/resources/assets/res/datagrid_en-US.properties" />
+      <file value="file://$PROJECT_DIR$/Shell/core/resources/assets/res/datagrid_fr-FR.properties" />
+      <base-name>datagrid</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>

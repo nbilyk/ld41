@@ -1,0 +1,12 @@
+POST http://kapali.mp.ad:8080/kapalidba/rservice/accountservice/accounts/getUser
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+POST http://kapali.mp.ad:8080/kapalidba/rservice/accountservice/accounts/getUser
+Accept: */*
+Cache-Control: no-cache
+
+###
+

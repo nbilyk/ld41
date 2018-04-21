@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build JVM" type="JetRunConfigurationType" factoryName="Kotlin">
+    <module name="Ld41Build" />
+    <option name="VM_PARAMETERS" value="" />
+    <option name="PROGRAM_PARAMETERS" value="-jvm" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <option name="MAIN_CLASS_NAME" value="ld41.build.BuildLd41Kt" />
+    <option name="WORKING_DIRECTORY" value="" />
+    <envs>
+      <env name="ACORNUI_HOME" value="$ACORNUI_HOME$" />
+    </envs>
+    <method>
+      <option name="Make" enabled="false" />
+    </method>
+  </configuration>
+</component>
