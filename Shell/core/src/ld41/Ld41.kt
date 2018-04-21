@@ -22,8 +22,13 @@ import com.acornui.component.UiComponent
 import com.acornui.component.stage
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
+import com.acornui.core.focus.Focusable
+import com.acornui.core.focus.focusFirst
 import com.acornui.core.immutable.DataBinding
+import com.acornui.core.input.Ascii
+import com.acornui.core.input.keyDown
 import com.acornui.core.mvc.commander
+import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.tween.Tween
 import com.acornui.skins.BasicUiSkin
 import ld41.command.HuntCommand
@@ -35,6 +40,8 @@ import ld41.model.TargetVo
  * @author nbilyk
  */
 class Ld41(owner: Owned) : StackLayoutContainer(owner) {
+
+	override var focusEnabled: Boolean = true
 
 	private val dataBinding = DataBinding<Ld41Vo>()
 
@@ -57,6 +64,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			removeElement(_currentView)
 			_currentView = value
 			addOptionalElement(value)
+			value?.focusFirst()
 		}
 
 	init {
@@ -138,6 +146,19 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 		cmd.onCommandInvoked(FlirtCommand) {
 			currentView = flirtView
+		}
+
+		stage.keyDown().add {
+			if ((it.altKey && it.keyCode == Ascii.ENTER) || it.keyCode == Ascii.F11) {
+				window.fullScreen = !window.fullScreen
+			}
+		}
+
+		// TODO: TEMP cheat codes
+		keyDown().add {
+			if (it.keyCode == Ascii.J && it.ctrlKey) {
+				invokeCommand(HuntCommand("joe"))
+			}
 		}
 	}
 

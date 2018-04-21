@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 
 object Ld41Core : CoreModule(File("Shell/core"), name = "Ld41Core") {
 	init {
-		resources += skin("basic")
+		//resources += skin("basic")
 		moduleDependencies = arrayListOf(AcornUtils, AcornUiCore, AcornGame, AcornSpine)
 	}
 }
