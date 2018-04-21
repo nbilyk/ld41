@@ -37,6 +37,9 @@ import ld41.model.Ld41Vo
 import ld41.model.TargetVo
 import ld41.data.targets
 import ld41.data.emails
+import ld41.data.flirts
+import ld41.data.initialFlirt
+import ld41.model.FlirtVo
 
 /**
  * @author nbilyk
@@ -75,7 +78,9 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 		dataBinding.set(Ld41Vo(
 				targets = targets,
-				emails = emails)
+				emails = emails,
+				flirts = flirts,
+				initialFlirt = initialFlirt)
 		)
 
 		introView = IntroView(this) layout { fill() }
@@ -102,6 +107,8 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		currentView = introView
 
 		cmd.onCommandInvoked(CompleteIntro) {
+			flirtView.dataBind.first.set(dataBinding.get()!!.initialFlirt)
+			flirtView.dataBind.second.set(null)
 			currentView = flirtView
 		}
 
@@ -165,4 +172,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		return dataBinding.get()!!.targets.first { it.id == targetId }
 	}
 
+	private fun getFlirtByTargetId(targetId: String): FlirtVo {
+		return dataBinding.get()!!.flirts.first { it.targetId == targetId }
+	}
 }

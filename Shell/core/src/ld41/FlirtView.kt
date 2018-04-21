@@ -20,15 +20,31 @@ import com.acornui.component.button
 import com.acornui.component.layout.algorithm.VerticalLayoutContainer
 import com.acornui.component.text.text
 import com.acornui.core.di.Owned
+import com.acornui.core.immutable.DataBinding
 import com.acornui.core.input.interaction.click
 import com.acornui.core.mvc.Command
 import com.acornui.core.mvc.CommandType
 import com.acornui.core.mvc.invokeCommand
+import ld41.model.FlirtVo
+import ld41.model.TargetVo
 
 class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 
+	val dataBind = Pair(DataBinding<FlirtVo>(), DataBinding<TargetVo?>())
+
 	init {
+
 		+text("Flirt")
+
+		+text{
+			var target: TargetVo? = null
+			dataBind.second.bind {
+				target = it
+			}
+			dataBind.first.bind {
+				text = if (target?.killed == true) it.sBody else it.fBody
+			}
+		}
 
 		+button("Spurned") {
 			click().add {

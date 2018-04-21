@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package ld41.model
+package ld41.data
 
-data class Ld41Vo(
-		val targets: List<TargetVo>,
-		val emails: List<EmailVo>,
-		val flirts: List<FlirtVo>,
-		val initialFlirt: FlirtVo,
-		val spurnedCount: Int = 0
+import ld41.model.FlirtVo
+
+val flirts: List<FlirtVo> = listOf(
+		FlirtVo(
+				"You successfully killed your target!  You rock!  This is your positive flirtation experience!",
+				"You failed at killing your target!  You suck!  This is your negative flirtation experience!",
+				"jeff"
+		)
+)
+
+val initialFlirt: FlirtVo = FlirtVo(
+		"",
+		"This is your first flirt encounter with Waitress.  It's an auto-spurn."
 )
