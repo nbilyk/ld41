@@ -22,7 +22,6 @@ import com.acornui.component.UiComponent
 import com.acornui.component.stage
 import com.acornui.core.di.Owned
 import com.acornui.core.di.own
-import com.acornui.core.focus.Focusable
 import com.acornui.core.focus.focusFirst
 import com.acornui.core.immutable.DataBinding
 import com.acornui.core.input.Ascii
@@ -31,12 +30,15 @@ import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.tween.Tween
 import com.acornui.skins.BasicUiSkin
+import ld41.command.FlirtCommand
 import ld41.command.HuntCommand
-import ld41.model.EmailVo
 import ld41.model.Ld41Vo
 import ld41.model.TargetVo
 import ld41.data.targets
 import ld41.data.emails
+import ld41.data.flirts
+import ld41.data.initialFlirt
+import ld41.model.FlirtVo
 
 /**
  * @author nbilyk
@@ -75,7 +77,9 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 		dataBinding.set(Ld41Vo(
 				targets = targets,
-				emails = emails)
+				emails = emails,
+				flirts = flirts,
+				lastTarget = null)
 		)
 
 		introView = IntroView(this) layout { fill() }
@@ -102,11 +106,16 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		currentView = introView
 
 		cmd.onCommandInvoked(CompleteIntro) {
+			flirtView.dataBind.set(Pair(null, initialFlirt))
 			currentView = flirtView
 		}
 
 		cmd.onCommandInvoked(HuntCommand) {
-			huntView.dataBind.set(getTargetById(it.targetId))
+			event ->
+			dataBinding {
+				it.copy(lastTarget = getTargetById(event.targetId))
+			}
+			huntView.dataBind.set(getTargetById(event.targetId))
 			currentView = huntView
 		}
 
@@ -140,6 +149,8 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		}
 
 		cmd.onCommandInvoked(FlirtCommand) {
+			val lastTarget = dataBinding.get()?.lastTarget
+			flirtView.dataBind.set(Pair(lastTarget,getFlirtByTargetId(lastTarget?.id)))
 			currentView = flirtView
 		}
 
@@ -166,4 +177,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		return dataBinding.get()!!.targets.first { it.id == targetId }
 	}
 
+	private fun getFlirtByTargetId(targetId: String?): FlirtVo {
+		return if (targetId == null) initialFlirt else dataBinding.get()!!.flirts.first { it.targetId == targetId }
+	}
 }

@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package ld41.model
+package ld41.command
 
-data class Ld41Vo(
-		val targets: List<TargetVo>,
-		val emails: List<EmailVo>,
-		val flirts: List<FlirtVo>,
-		val lastTarget: TargetVo?,
-		val spurnedCount: Int = 0
-)
+import com.acornui.core.mvc.Command
+import com.acornui.core.mvc.CommandType
+import ld41.model.TargetVo
+
+class FlirtCommand(val target: TargetVo? = null) : Command {
+
+	override val type: CommandType<out Command> = Companion
+
+	companion object : CommandType<FlirtCommand>
+}

@@ -23,9 +23,8 @@ import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.immutable.DataBinding
 import com.acornui.core.input.interaction.click
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandType
 import com.acornui.core.mvc.invokeCommand
+import ld41.command.FlirtCommand
 import ld41.command.HuntCommand
 import ld41.model.EmailVo
 
@@ -58,13 +57,9 @@ class EmailView(owned: Owned) : VerticalLayoutContainer(owned) {
 
 		+button("Flirt") {
 			click().add {
-				invokeCommand(FlirtCommand)
+				invokeCommand(FlirtCommand())
 			}
 		}
 	}
 
-}
-
-object FlirtCommand : Command, CommandType<FlirtCommand> {
-	override val type: CommandType<out Command> = this
 }

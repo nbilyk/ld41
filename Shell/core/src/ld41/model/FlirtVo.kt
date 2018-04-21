@@ -16,10 +16,8 @@
 
 package ld41.model
 
-data class Ld41Vo(
-		val targets: List<TargetVo>,
-		val emails: List<EmailVo>,
-		val flirts: List<FlirtVo>,
-		val lastTarget: TargetVo?,
-		val spurnedCount: Int = 0
+data class FlirtVo(
+		val sBody: String? = "",
+		val fBody: String? = "",
+		val targetId: String? = null
 )
