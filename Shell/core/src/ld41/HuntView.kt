@@ -31,7 +31,6 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.graphics.AtlasComponent
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.perspectiveCamera
 import com.acornui.core.immutable.DataBinding
@@ -39,7 +38,9 @@ import com.acornui.core.input.interaction.click
 import com.acornui.core.mvc.Command
 import com.acornui.core.mvc.CommandType
 import com.acornui.core.time.onTick
+import com.acornui.gl.component.StencilUtil
 import com.acornui.gl.core.Gl20
+import com.acornui.gl.core.GlState
 import com.acornui.graphics.Color
 import com.acornui.graphics.LightingRenderer
 import com.acornui.graphics.lighting.PointLight
@@ -56,20 +57,20 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 
 	private val world: World
 
-	private val snipeCam = perspectiveCamera(autoCenter = false) {
+	private val scopeCam = perspectiveCamera(autoCenter = false) {
 		fieldOfView = 16f * MathUtils.degRad
 		setPosition(0f, -1000f, -16000f)
 		far = -position.z + 2000f
 	}
 
-	private val viewCam = perspectiveCamera(autoCenter = false) {
+	private val noScopeCam = perspectiveCamera(autoCenter = false) {
 		fieldOfView = 67f * MathUtils.degRad
 		setPosition(0f, -1000f, -16000f)
 		far = -position.z + 2000f
 	}
 
 	private val windowResizedHandler = { newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		snipeCam.setViewport(newWidth, newHeight)
+		scopeCam.setViewport(newWidth, newHeight)
 	}
 
 	private lateinit var scope: UiComponent
@@ -84,6 +85,21 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 	private val bullet = Bullet()
 
 	private var shotRequested: Boolean = false
+
+	private val lightingRenderer = own(LightingRenderer(injector, numPointLights = 1, numShadowPointLights = 0, directionalShadowsResolution = 2048, useModel = false))
+
+	private val ambientLight = ambientLight {
+		color.set(Color(0.8f, 0.8f, 0.8f, 1f))
+	}
+
+	private val directionalLight = directionalLight {
+		direction.set(0f, 1f, 1f)
+		color.set(Color(1f, 1f, 1f, 1f))
+	}
+
+	private val pointLights = Array(lightingRenderer.numPointLights, {
+		PointLight()
+	}).toList()
 
 	init {
 		assets.load("assets/sounds/sniperRifle.mp3", AssetType.SOUND).then { gunShot = it }
@@ -120,7 +136,7 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 //		}
 
 		world = +World(this, camLookAt).apply {
-			cameraOverride = snipeCam
+			cameraOverride = noScopeCam
 		} layout { center() }
 
 
@@ -140,12 +156,15 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 			if (r > DEAD_ZONE) {
 				val scl = (r - DEAD_ZONE) / (1f - DEAD_ZONE) + DEAD_ZONE
 				tmpVec.nor().scl(scl * SCOPE_MOVE_SPEED)
-				//snipeCam.pointToLookAt()
+				//scopeCam.pointToLookAt()
 
 				camLookAt.add(tmpVec.x, tmpVec.y)
 				camMoveWindow.clampPoint(camLookAt)
-				snipeCam.pointToLookAt(camLookAt.x, camLookAt.y, 0f)
-				snipeCam.setUp(Vector3.NEG_Y)
+				scopeCam.pointToLookAt(camLookAt.x, camLookAt.y, 0f)
+				scopeCam.setUp(Vector3.NEG_Y)
+
+				noScopeCam.pointToLookAt(camLookAt.x, camLookAt.y, 0f)
+				noScopeCam.setUp(Vector3.NEG_Y)
 			}
 
 			if (shotRequested) {
@@ -171,7 +190,6 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 					bullet.isActive = false
 				}
 			}
-
 		}
 
 		resetBullet(bullet)
@@ -182,8 +200,47 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 		world.bulletView.visible = false
 
 		bullet.life = 150
-		bullet.position.set(snipeCam.position)
+		bullet.position.set(scopeCam.position)
 		bullet.velocity.set(camLookAt).sub(bullet.position).nor().scl(200f)
+	}
+
+	private val gl = inject(Gl20)
+	private val glState = inject(GlState)
+
+	override fun draw() {
+		lightingRenderer.directionalLightCamera.setClipSpaceFromWorld(camLookAt.x - 1200f, camLookAt.y + 1200f, camLookAt.y - 1200f, camLookAt.y + 1200f, -100f, 2000f, scopeCam)
+		lightingRenderer.render(camera, ambientLight, directionalLight, pointLights, {
+			world.drawOcclusion()
+		}, {
+			val batch = glState.batch
+			batch.flush(true)
+			gl.clear(Gl20.STENCIL_BUFFER_BIT)
+			gl.enable(Gl20.STENCIL_TEST)
+			gl.colorMask(false, false, false, false)
+			gl.stencilFunc(Gl20.ALWAYS, 1, 0.inv())
+			gl.stencilOp(Gl20.REPLACE, Gl20.REPLACE, Gl20.REPLACE)
+			scope.render()
+			batch.flush(true)
+
+			gl.colorMask(true, true, true, true)
+			gl.stencilFunc(Gl20.NOTEQUAL, 1, 0.inv())
+			gl.stencilOp(Gl20.KEEP, Gl20.KEEP, Gl20.KEEP)
+
+			world.cameraOverride = noScopeCam
+			world.render()
+			batch.flush(true)
+
+			gl.stencilFunc(Gl20.EQUAL, 1, 0.inv())
+
+			world.cameraOverride = scopeCam
+			world.render()
+			batch.flush(true)
+
+			gl.clear(Gl20.STENCIL_BUFFER_BIT)
+			gl.disable(Gl20.STENCIL_TEST)
+
+			scope.render()
+		})
 	}
 
 	override fun dispose() {
@@ -226,21 +283,6 @@ private class World(
 
 	private val scene: SpineScene
 
-	private val lightingRenderer = own(LightingRenderer(injector, numPointLights = 1, numShadowPointLights = 0, directionalShadowsResolution = 2048, useModel = false))
-
-	private val ambientLight = ambientLight {
-		color.set(Color(0.8f, 0.8f, 0.8f, 1f))
-	}
-
-	private val directionalLight = directionalLight {
-		direction.set(0f, 1f, 1f)
-		color.set(Color(1f, 1f, 1f, 1f))
-	}
-
-	private val pointLights = Array(lightingRenderer.numPointLights, {
-		PointLight()
-	}).toList()
-
 	val bulletView: UiComponent
 
 	init {
@@ -252,11 +294,15 @@ private class World(
 
 		+container {
 			+BuildingView(this).apply {
+				moveTo(-BuildingView.WIDTH - 400f, 0f, 1000f)
+			}
+
+			+BuildingView(this).apply {
 				moveTo(0f, 0f, 1000f)
 			}
 
 			+BuildingView(this).apply {
-				moveTo(BuildingView.WIDTH + 100f, 0f, 1000f)
+				moveTo(BuildingView.WIDTH + 400f, 0f, 1000f)
 			}
 		}
 
@@ -267,6 +313,16 @@ private class World(
 					animationState.data.defaultMix = 0.25f
 					animationState.setAnimation(0, "walk", loop = true)
 				}
+			}
+		}
+
+		+container {
+			+BuildingView(this).apply {
+				moveTo(-BuildingView.WIDTH - 400f, 0f, 500f)
+			}
+
+			+BuildingView(this).apply {
+				moveTo(BuildingView.WIDTH + 400f, 0f, 500f)
 			}
 		}
 
@@ -290,19 +346,8 @@ private class World(
 		println("Slot $slot")
 	}
 
-	private val gl = inject(Gl20)
-
-	override fun draw() {
-		lightingRenderer.directionalLightCamera.setClipSpaceFromWorld(camLookAt.x - 1200f, camLookAt.y + 1200f, camLookAt.y - 1200f, camLookAt.y + 1200f, -100f, 2000f, camera)
-		lightingRenderer.render(camera, ambientLight, directionalLight, pointLights, {
-			scene.render()
-		}, {
-			_drawScene()
-		})
-	}
-
-	private fun _drawScene() {
-		super.draw()
+	fun drawOcclusion() {
+		scene.render()
 	}
 }
 
@@ -326,11 +371,18 @@ private class Bullet {
 private class BuildingView(owner: Owned) : ElementContainerImpl<UiComponent>(owner) {
 
 	init {
-//		+atlas("assets/hunt.json", "Building") {
-//			setScaling(10f, 10f)
-//			rotationY = -PI / 2f
-//			setPosition(WIDTH, -HEIGHT)
-//		}
+		+atlas("assets/hunt.json", "Building") {
+			setScaling(10f, 10f)
+			rotationY = -PI / 2f
+			setPosition(WIDTH, -HEIGHT)
+		}
+
+		+atlas("assets/hunt.json", "Building") {
+			setScaling(10f, 10f)
+			rotationY = PI / 2f
+			setPosition(0f, -HEIGHT, WIDTH)
+		}
+
 		+atlas("assets/hunt.json", "Building") {
 			setScaling(10f, 10f)
 			setPosition(0f, -HEIGHT)
