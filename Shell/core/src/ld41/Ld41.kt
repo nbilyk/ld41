@@ -35,6 +35,8 @@ import ld41.command.HuntCommand
 import ld41.model.EmailVo
 import ld41.model.Ld41Vo
 import ld41.model.TargetVo
+import ld41.data.targets
+import ld41.data.emails
 
 /**
  * @author nbilyk
@@ -72,16 +74,9 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		BasicUiSkin(stage).apply()
 
 		dataBinding.set(Ld41Vo(
-				targets = listOf(
-						TargetVo("joe", "Joe Bobo", 0.5f),
-						TargetVo("sam", "Sammy Samsam", 0.5f)
-				),
-				emails = listOf(EmailVo(
-						"Super hot",
-						"This is a test, bebby",
-						"joe"
-				))
-		))
+				targets = targets,
+				emails = emails)
+		)
 
 		introView = IntroView(this) layout { fill() }
 
@@ -169,6 +164,5 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 	private fun getTargetById(targetId: String): TargetVo {
 		return dataBinding.get()!!.targets.first { it.id == targetId }
 	}
-
 
 }
