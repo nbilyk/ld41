@@ -16,88 +16,138 @@
 
 package ld41
 
+import com.acornui.collection.replace
 import com.acornui.component.StackLayoutContainer
-import com.acornui.component.scroll.ScrollPolicy
-import com.acornui.component.scroll.scrollArea
+import com.acornui.component.UiComponent
 import com.acornui.component.stage
-import com.acornui.component.text.TextArea
-import com.acornui.component.text.textArea
 import com.acornui.core.di.Owned
-import com.acornui.core.nav.NavBindable
-import com.acornui.math.Pad
+import com.acornui.core.di.own
+import com.acornui.core.immutable.DataBinding
+import com.acornui.core.mvc.commander
+import com.acornui.core.tween.Tween
 import com.acornui.skins.BasicUiSkin
+import ld41.command.HuntCommand
+import ld41.model.EmailVo
+import ld41.model.Ld41Vo
+import ld41.model.TargetVo
 
 /**
  * @author nbilyk
  */
-class Ld41(owner: Owned) : StackLayoutContainer(owner), NavBindable {
+class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
-	private lateinit var mainText: TextArea
+	private val dataBinding = DataBinding<Ld41Vo>()
+
+	private val cmd = own(commander())
+
+	private var introView: IntroView
+
+	private var emailView: EmailView
+
+	private var huntView: HuntView
+
+	private var flirtView: FlirtView
+
+	private var victoryView: VictoryView
+
+	private var _currentView: UiComponent? = null
+	private var currentView: UiComponent?
+		get() = _currentView
+		set(value) {
+			removeElement(_currentView)
+			_currentView = value
+			addOptionalElement(value)
+		}
 
 	init {
+		Tween.prepare() // Make the very first tween smooth.
 		BasicUiSkin(stage).apply()
 
-		+scrollArea {
-//			+vGroup {
-//				style.gap = 0f
-//
-//				+hGroup {
-//					style.padding = Pad(4f)
-//					radioGroup<FlowHAlign> {
-//						+radioButton(FlowHAlign.LEFT) {
-//							label = "Left"
-//						}
-//						+radioButton(FlowHAlign.CENTER) {
-//							label = "Center"
-//						}
-//						+radioButton(FlowHAlign.RIGHT) {
-//							label = "Right"
-//						}
-//						+radioButton(FlowHAlign.JUSTIFY) {
-//							label = "Justify"
-//						}
-//						selectedData = FlowHAlign.LEFT
-//						changed.add {
-//							old, new ->
-//							mainText.flowStyle.horizontalAlign = new?.data ?: FlowHAlign.LEFT
-//						}
-//					}
-//				}
-//
-//				+scrollArea {
+		dataBinding.set(Ld41Vo(
+				targets = listOf(
+						TargetVo("joe", "Joe Bobo", 0.5f),
+						TargetVo("sam", "Sammy Samsam", 0.5f)
+				),
+				emails = listOf(EmailVo(
+						"Super hot",
+						"This is a test, bebby",
+						"joe"
+				))
+		))
 
-					mainText = +textArea {
+		introView = IntroView(this) layout { fill() }
 
-						allowTab = true
-						flowStyle.padding = Pad(20f)
-//						flowStyle.multiline = false
-						hScrollPolicy = ScrollPolicy.AUTO
-
-						text = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus magna nulla, commodo non nisl vel, congue gravida turpis. Mauris sed ultrices purus. Duis gravida sapien in faucibus malesuada. Etiam in hendrerit quam, non porta diam. Vestibulum sit amet congue felis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin tempus velit sed neque lobortis iaculis. Etiam cursus leo vitae massa finibus finibus. Donec semper nunc non neque venenatis, vitae dignissim nibh luctus. Suspendisse maximus risus sit amet pretium tempor. Nullam nec enim vitae leo ultrices congue.
-
-Suspendisse et purus euismod, pulvinar quam vel, consequat dui. Aliquam luctus neque sit amet tortor varius rutrum. Sed sollicitudin condimentum massa, ut scelerisque magna fermentum lobortis. Nam rutrum bibendum purus, quis luctus nunc tincidunt nec. Ut non velit fringilla, maximus metus a, ultricies libero. Duis felis nisl, pulvinar eu felis non, pellentesque semper velit. Donec semper massa ipsum, quis finibus eros congue non. Proin ultricies erat eget arcu scelerisque, pellentesque gravida lectus facilisis.
-
-Cras porttitor tincidunt pharetra. Nulla sollicitudin sollicitudin fringilla. Donec volutpat aliquet sem. Etiam non felis lorem. Aenean auctor placerat ipsum, non dignissim mauris porttitor vitae. Vestibulum enim dolor, dictum nec volutpat ac, dapibus eget mi. Ut laoreet, sem quis cursus tristique, erat nulla sodales ex, a feugiat enim nisl eu enim. Praesent justo libero, sollicitudin at ligula porta, lacinia volutpat odio. Etiam nunc augue, lacinia et lacinia et, molestie eget elit. In nec pharetra mauris, ac semper erat. Sed at elit id urna egestas convallis sed vel lectus. Pellentesque bibendum nulla lorem, at aliquam ex pulvinar non. Fusce pulvinar ultricies mauris, semper feugiat lacus. Mauris hendrerit vel dolor sit amet lobortis. Donec rhoncus nisi posuere mi auctor porttitor.
-
-Nullam ante urna, pulvinar id fringilla et, vehicula ac lacus. Praesent tempus ex vitae massa auctor, vitae vestibulum nunc imperdiet. Quisque dignissim molestie turpis varius convallis. Maecenas sagittis dui purus, vitae cursus massa ornare eget. Nulla facilisi. Phasellus interdum vel ipsum non feugiat. In pharetra erat vitae maximus hendrerit. Nullam in urna quis nisi viverra commodo. Maecenas ligula justo, tristique at dolor in, sagittis euismod arcu. In aliquam lectus imperdiet turpis gravida, in mollis nunc consequat. Maecenas posuere porta leo eget pellentesque. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In malesuada ultricies tortor at feugiat. Nunc quis arcu ut ante blandit varius malesuada in neque. Etiam malesuada purus vel nisl ornare suscipit. Etiam tellus libero, tempus quis lacus ut, rhoncus varius ligula.
-
-Cras sagittis, felis et fermentum malesuada, sapien justo tincidunt tortor, eget lobortis turpis magna et augue. Curabitur vitae lacus a velit elementum gravida. In rutrum orci vitae metus condimentum sagittis. Praesent et orci vitae mi dapibus feugiat quis id purus. Sed semper congue risus, in tempor ligula elementum eu. Nunc sagittis velit non tincidunt sollicitudin. Vestibulum id blandit massa."""
-					} layout { widthPercent = 1f; heightPercent = 1f }
-//				} layout { fill() }
-//
-//			} layout { fill() }
+		emailView = EmailView(this).apply {
+			this@Ld41.dataBinding.bind {
+				emails.set(it.emails)
+			}
+			emails.bind {
+				newEmails ->
+				this@Ld41.dataBinding {
+					it.copy(emails = newEmails)
+				}
+			}
 		} layout { fill() }
 
-//		+rect {
-//			style.backgroundColor = Color.RED
-//			setOrigin(-100f, -200f)
-//			defaultWidth = 100f
-//			defaultHeight = 50f
-//			cursor(StandardCursors.HAND)
-//			click().add {
-//				println("Clicked")
-//			}
-//		}
+		huntView = HuntView(this).apply {
+		} layout { fill() }
 
+		flirtView = FlirtView(this) layout { fill() }
+
+		victoryView = VictoryView(this) layout { fill() }
+
+		currentView = introView
+
+		cmd.onCommandInvoked(CompleteIntro) {
+			currentView = flirtView
+		}
+
+		cmd.onCommandInvoked(HuntCommand) {
+			huntView.dataBind.set(getTargetById(it.targetId))
+			currentView = huntView
+		}
+
+		cmd.onCommandInvoked(SpurnedCommand) {
+			dataBinding {
+				it.copy(spurnedCount = it.spurnedCount + 1)
+			}
+			currentView = emailView
+		}
+
+		cmd.onCommandInvoked(KillCommand) {
+			event ->
+			dataBinding {
+				val index = getTargetIndexById(event.target.id)
+				it.copy(targets = it.targets.replace(index, event.target.copy(killed = true)))
+			}
+			currentView = emailView
+		}
+
+		cmd.onCommandInvoked(MissCommand) {
+			event ->
+			dataBinding {
+				val index = getTargetIndexById(event.target.id)
+				it.copy(targets = it.targets.replace(index, event.target.copy(attemptedKills = event.target.attemptedKills + 1)))
+			}
+			currentView = emailView
+		}
+
+		cmd.onCommandInvoked(AcquiescedCommand) {
+			currentView = victoryView
+		}
+
+		cmd.onCommandInvoked(FlirtCommand) {
+			currentView = flirtView
+		}
 	}
+
+	private fun getTargetIndexById(targetId: String): Int {
+		return dataBinding.get()!!.targets.indexOfFirst { it.id == targetId }
+	}
+
+	private fun getTargetById(targetId: String): TargetVo {
+		return dataBinding.get()!!.targets.first { it.id == targetId }
+	}
+
+
 }
