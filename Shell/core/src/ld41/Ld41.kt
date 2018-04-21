@@ -107,8 +107,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		currentView = introView
 
 		cmd.onCommandInvoked(CompleteIntro) {
-			flirtView.dataBind.first.set(dataBinding.get()!!.initialFlirt)
-			flirtView.dataBind.second.set(null)
+			flirtView.dataBind.set(Pair(null, dataBinding.get()!!.initialFlirt))
 			currentView = flirtView
 		}
 

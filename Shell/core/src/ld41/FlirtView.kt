@@ -30,19 +30,17 @@ import ld41.model.TargetVo
 
 class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 
-	val dataBind = Pair(DataBinding<FlirtVo>(), DataBinding<TargetVo?>())
+	val dataBind = DataBinding<Pair<TargetVo?, FlirtVo>>()
 
 	init {
 
 		+text("Flirt")
 
 		+text{
-			var target: TargetVo? = null
-			dataBind.second.bind {
-				target = it
-			}
-			dataBind.first.bind {
-				text = if (target?.killed == true) it.sBody else it.fBody
+			dataBind.bind {
+				val target = it.first
+				val flirt: FlirtVo = it.second
+				text = if (target?.killed == true) flirt.sBody ?: "" else flirt.fBody ?: ""
 			}
 		}
 
@@ -53,6 +51,11 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 		}
 
 		+button("Loved") {
+			dataBind.bind {
+				// TODO: Work off of victory conditions.
+				val target = it.first
+				visible = target?.killed ?: false
+			}
 			click().add {
 				invokeCommand(AcquiescedCommand)
 			}

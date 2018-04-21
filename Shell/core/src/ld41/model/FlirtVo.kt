@@ -17,7 +17,7 @@
 package ld41.model
 
 data class FlirtVo(
-		val sBody: String,
-		val fBody: String,
+		val sBody: String? = "",
+		val fBody: String? = "",
 		val targetId: String? = null
 )
