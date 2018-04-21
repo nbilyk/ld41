@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package ld41.model
+package ld41.data
 
-data class EmailVo(
-		val from: String,
-		val subject: String,
-		val body: String,
-		val targetId: String?
+import ld41.model.TargetVo
+
+val targets: List<TargetVo> = listOf(
+		TargetVo(
+				"jeff",
+				"Jeff TBD esy"
+		),
+		TargetVo(
+				"sam",
+				"Sam Summers med",
+				.25f
+		),
+		TargetVo(
+				"richie",
+				"Richie TBD hrd",
+				.75f
+		)
 )
