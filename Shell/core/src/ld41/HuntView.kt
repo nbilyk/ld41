@@ -31,13 +31,10 @@ import com.acornui.core.cursor.cursor
 import com.acornui.core.di.Owned
 import com.acornui.core.di.inject
 import com.acornui.core.di.own
-import com.acornui.core.graphics.AtlasComponent
 import com.acornui.core.graphics.atlas
 import com.acornui.core.graphics.perspectiveCamera
 import com.acornui.core.immutable.DataBinding
 import com.acornui.core.input.interaction.click
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandType
 import com.acornui.core.time.onTick
 import com.acornui.gl.core.Gl20
 import com.acornui.graphics.Color
@@ -202,21 +199,6 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 
 
 }
-
-class KillCommand(val target: TargetVo?) : Command {
-
-	override val type: CommandType<out Command> = Companion
-
-	companion object : CommandType<KillCommand>
-}
-
-class MissCommand(val target: TargetVo?) : Command {
-
-	override val type: CommandType<out Command> = Companion
-
-	companion object : CommandType<MissCommand>
-}
-
 
 private class World(
 		owner: Owned,

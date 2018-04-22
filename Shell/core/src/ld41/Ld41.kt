@@ -32,6 +32,8 @@ import com.acornui.core.tween.Tween
 import com.acornui.skins.BasicUiSkin
 import ld41.command.FlirtCommand
 import ld41.command.HuntCommand
+import ld41.command.KillCommand
+import ld41.command.MissCommand
 import ld41.model.Ld41Vo
 import ld41.model.TargetVo
 import ld41.data.targets
