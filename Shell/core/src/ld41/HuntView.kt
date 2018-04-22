@@ -77,7 +77,7 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 	}
 
 	private val windowResizedHandler = { newWidth: Float, newHeight: Float, isUserInteraction: Boolean ->
-		scopeCam.setViewport(newWidth * window.scaleX, newHeight * window.scaleY)
+		scopeCam.setViewport(newWidth, newHeight)
 		noScopeCam.setViewport(scopeCam.viewportWidth, scopeCam.viewportHeight)
 	}
 
