@@ -135,7 +135,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			dataBinding {
 				if (event.target != null) {
 					val index = getTargetIndexById(event.target.id)
-					it.copy( 
+					it.copy(
 							targets = it.targets.replace(index, event.target.copy(killed = true)),
 							killCount = it.killCount + 1,
 							targetKillCount = it.targetKillCount + 1
@@ -240,32 +240,4 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		else
 			dataBinding.get()!!.flirts.first { it.targetId == targetId }
 	}
-
-//	private fun getHuntCount(): Int {
-//		return dataBinding.get()!!.huntCount
-//	}
-//
-//	private fun getKillCount(): Int {
-//
-//	}
-//
-//	private fun getTargetKillCount(): Int {
-//
-//	}
-//
-//	private fun getInnocentKillCount(): Int {
-//
-//	}
-//
-//	private fun getWhiffCount(): Int {
-//
-//	}
-//
-//	private fun getTargetWhiffCount(): Int {
-//
-//	}
-//
-//	private fun getInnocentWhiffCount(): Int {
-//
-//	}
 }
