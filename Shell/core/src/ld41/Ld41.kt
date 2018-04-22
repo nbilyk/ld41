@@ -29,6 +29,7 @@ import com.acornui.core.input.keyDown
 import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.tween.Tween
+import com.acornui.math.MathUtils
 import com.acornui.skins.BasicUiSkin
 import ld41.command.*
 import ld41.model.Ld41Vo
@@ -36,6 +37,7 @@ import ld41.model.TargetVo
 import ld41.data.targets
 import ld41.data.emails
 import ld41.data.flirts
+import ld41.data.terrors as dTerrors
 import ld41.data.initialFlirt
 import ld41.model.FlirtVo
 
@@ -70,6 +72,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			value?.focusFirst()
 		}
 
+	private var terrors: List<String> = dTerrors
 	private var hasStartedHunt: Boolean = false
 
 	init {
@@ -180,7 +183,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			val lastTarget = getTargetById(dataBinding.get()!!.lastTarget)
 			// TODO: Clean up with when statement and pull initialFlirt out of getFlirtByTargetId
 			val flirt = if (lastTarget == null && hasStartedHunt) {
-				FlirtVo(fBody = "random terror string")
+				FlirtVo(fBody = popTerror())
 			} else {
 				getFlirtByTargetId(lastTarget?.id)
 			}
@@ -240,6 +243,26 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 				}
 				invokeCommand(FlirtCommand())
 			}
+		}
+		keyDown().add {
+			if (it.keyCode == Ascii.K && it.ctrlKey && it.shiftKey && it.altKey) {
+				it.preventDefault()
+				dataBinding {
+					it.copy(
+							targets = dataBinding.get()!!.targets.map { it.copy(killed = true) }
+					)
+				}
+				invokeCommand(FlirtCommand())
+			}
+		}
+	}
+
+	private fun popTerror(): String {
+		// TODO: Make more optimized with Random function.  This is O(N)
+		val terror = terrors.shuffled().lastOrNull()
+		return if (terror != null) terror else {
+			terrors = dTerrors
+			popTerror()
 		}
 	}
 
