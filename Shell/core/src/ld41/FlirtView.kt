@@ -22,9 +22,9 @@ import com.acornui.component.text.text
 import com.acornui.core.di.Owned
 import com.acornui.core.immutable.DataBinding
 import com.acornui.core.input.interaction.click
-import com.acornui.core.mvc.Command
-import com.acornui.core.mvc.CommandType
 import com.acornui.core.mvc.invokeCommand
+import ld41.command.AcquiescedCommand
+import ld41.command.SpurnedCommand
 import ld41.model.FlirtVo
 import ld41.model.TargetVo
 
@@ -64,13 +64,4 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 		}
 	}
 
-}
-
-
-object SpurnedCommand : Command, CommandType<SpurnedCommand> {
-	override val type: CommandType<out Command> = this
-}
-
-object AcquiescedCommand : Command, CommandType<AcquiescedCommand> {
-	override val type: CommandType<out Command> = this
 }
