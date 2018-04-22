@@ -29,7 +29,6 @@ import com.acornui.core.input.keyDown
 import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.tween.Tween
-import com.acornui.math.MathUtils
 import com.acornui.skins.BasicUiSkin
 import ld41.command.*
 import ld41.model.Ld41Vo
@@ -181,11 +180,9 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 		cmd.onCommandInvoked(FlirtCommand) {
 			val lastTarget = getTargetById(dataBinding.get()!!.lastTarget)
-			// TODO: Clean up with when statement and pull initialFlirt out of getFlirtByTargetId
-			val flirt = if (lastTarget == null && hasStartedHunt) {
-				FlirtVo(fBody = popTerror())
-			} else {
-				getFlirtByTargetId(lastTarget?.id)
+			val flirt = when (lastTarget) {
+				null -> if (!hasStartedHunt) initialFlirt else FlirtVo(fBody = popTerror())
+				else -> getFlirtByTargetId(lastTarget.id)
 			}
 			flirtView.dataBind.set(Triple(lastTarget,flirt,isWinner()))
 			currentView = flirtView
@@ -274,11 +271,8 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		return dataBinding.get()!!.targets.firstOrNull { it.id == targetId }
 	}
 
-	private fun getFlirtByTargetId(targetId: String?): FlirtVo {
-		return if (targetId == null)
-			initialFlirt
-		else
-			dataBinding.get()!!.flirts.first { it.targetId == targetId }
+	private fun getFlirtByTargetId(targetId: String): FlirtVo {
+		return dataBinding.get()!!.flirts.first { it.targetId == targetId }
 	}
 
 	private fun isWinner(): Boolean {
