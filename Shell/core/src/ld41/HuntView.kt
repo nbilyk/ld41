@@ -52,7 +52,7 @@ import ld41.model.TargetVo
 
 class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 
-	val dataBind = DataBinding<TargetVo>()
+	val dataBind = DataBinding<TargetVo?>()
 
 	private val world: World
 
@@ -203,14 +203,14 @@ class HuntView(owned: Owned) : CanvasLayoutContainer(owned) {
 
 }
 
-class KillCommand(val target: TargetVo) : Command {
+class KillCommand(val target: TargetVo?) : Command {
 
 	override val type: CommandType<out Command> = Companion
 
 	companion object : CommandType<KillCommand>
 }
 
-class MissCommand(val target: TargetVo) : Command {
+class MissCommand(val target: TargetVo?) : Command {
 
 	override val type: CommandType<out Command> = Companion
 

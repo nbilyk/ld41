@@ -71,6 +71,8 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			value?.focusFirst()
 		}
 
+	private var hasStartedHunt: Boolean = false
+
 	init {
 		Tween.prepare() // Make the very first tween smooth.
 		BasicUiSkin(stage).apply()
@@ -78,8 +80,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		dataBinding.set(Ld41Vo(
 				targets = targets,
 				emails = emails,
-				flirts = flirts,
-				lastTarget = null)
+				flirts = flirts)
 		)
 
 		introView = IntroView(this) layout { fill() }
@@ -113,15 +114,18 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		cmd.onCommandInvoked(HuntCommand) {
 			event ->
 			dataBinding {
-				it.copy(lastTarget = getTargetById(event.targetId))
+				it.copy(lastTarget = event.targetId, huntCount = it.huntCount + 1)
 			}
 			huntView.dataBind.set(getTargetById(event.targetId))
+			if (!this.hasStartedHunt)
+				this.hasStartedHunt = true
 			currentView = huntView
 		}
 
 		cmd.onCommandInvoked(SpurnedCommand) {
 			dataBinding {
-				it.copy(spurnedCount = it.spurnedCount + 1)
+				if (!hasStartedHunt) it else
+					it.copy(spurnedCount = it.spurnedCount + 1)
 			}
 			currentView = emailView
 		}
@@ -129,8 +133,20 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		cmd.onCommandInvoked(KillCommand) {
 			event ->
 			dataBinding {
-				val index = getTargetIndexById(event.target.id)
-				it.copy(targets = it.targets.replace(index, event.target.copy(killed = true)))
+				if (event.target != null) {
+					val index = getTargetIndexById(event.target.id)
+					it.copy( 
+							targets = it.targets.replace(index, event.target.copy(killed = true)),
+							killCount = it.killCount + 1,
+							targetKillCount = it.targetKillCount + 1
+					)
+				}
+				else {
+					it.copy(
+							killCount = it.killCount + 1,
+							innocentKillCount = it.innocentKillCount + 1
+					)
+				}
 			}
 			currentView = emailView
 		}
@@ -138,8 +154,20 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		cmd.onCommandInvoked(MissCommand) {
 			event ->
 			dataBinding {
-				val index = getTargetIndexById(event.target.id)
-				it.copy(targets = it.targets.replace(index, event.target.copy(attemptedKills = event.target.attemptedKills + 1)))
+				if (event.target != null) {
+					val index = getTargetIndexById(event.target.id)
+					it.copy(
+							targets = it.targets.replace(index, event.target.copy(attemptedKills = event.target.attemptedKills + 1)),
+							whiffCount = it.whiffCount + 1,
+							targetWhiffCount = it.targetWhiffCount + 1
+					)
+				}
+				else {
+					it.copy(
+							whiffCount = it.whiffCount + 1,
+							innocentWhiffCount = it.innocentWhiffCount + 1
+					)
+				}
 			}
 			currentView = emailView
 		}
@@ -149,8 +177,13 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		}
 
 		cmd.onCommandInvoked(FlirtCommand) {
-			val lastTarget = dataBinding.get()?.lastTarget
-			flirtView.dataBind.set(Pair(lastTarget,getFlirtByTargetId(lastTarget?.id)))
+			val lastTarget = getTargetById(dataBinding.get()!!.lastTarget)
+			val flirt = if (lastTarget == null && hasStartedHunt) {
+				FlirtVo(fBody = "random terror string")
+			} else {
+				getFlirtByTargetId(lastTarget?.id)
+			}
+			flirtView.dataBind.set(Pair(lastTarget,flirt))
 			currentView = flirtView
 		}
 
@@ -167,17 +200,72 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 				invokeCommand(HuntCommand("dummy"))
 			}
 		}
+		keyDown().add {
+			if (it.keyCode == Ascii.M && it.ctrlKey) {
+				it.preventDefault()
+				invokeCommand(MissCommand(getTargetById("jeff")))
+			}
+		}
+		keyDown().add {
+			if (it.keyCode == Ascii.M && it.ctrlKey && it.shiftKey) {
+				it.preventDefault()
+				invokeCommand(MissCommand(getTargetById("joe")))
+			}
+		}
+		keyDown().add {
+			if (it.keyCode == Ascii.K && it.ctrlKey) {
+				it.preventDefault()
+				invokeCommand(KillCommand(getTargetById("jeff")))
+			}
+		}
+		keyDown().add {
+			if (it.keyCode == Ascii.K && it.ctrlKey && it.shiftKey) {
+				it.preventDefault()
+				invokeCommand(KillCommand(getTargetById("joe")))
+			}
+		}
 	}
 
 	private fun getTargetIndexById(targetId: String): Int {
 		return dataBinding.get()!!.targets.indexOfFirst { it.id == targetId }
 	}
 
-	private fun getTargetById(targetId: String): TargetVo {
-		return dataBinding.get()!!.targets.first { it.id == targetId }
+	private fun getTargetById(targetId: String?): TargetVo? {
+		return dataBinding.get()!!.targets.firstOrNull { it.id == targetId }
 	}
 
 	private fun getFlirtByTargetId(targetId: String?): FlirtVo {
-		return if (targetId == null) initialFlirt else dataBinding.get()!!.flirts.first { it.targetId == targetId }
+		return if (targetId == null)
+			initialFlirt
+		else
+			dataBinding.get()!!.flirts.first { it.targetId == targetId }
 	}
+
+//	private fun getHuntCount(): Int {
+//		return dataBinding.get()!!.huntCount
+//	}
+//
+//	private fun getKillCount(): Int {
+//
+//	}
+//
+//	private fun getTargetKillCount(): Int {
+//
+//	}
+//
+//	private fun getInnocentKillCount(): Int {
+//
+//	}
+//
+//	private fun getWhiffCount(): Int {
+//
+//	}
+//
+//	private fun getTargetWhiffCount(): Int {
+//
+//	}
+//
+//	private fun getInnocentWhiffCount(): Int {
+//
+//	}
 }

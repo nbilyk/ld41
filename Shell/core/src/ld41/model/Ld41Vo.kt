@@ -20,6 +20,14 @@ data class Ld41Vo(
 		val targets: List<TargetVo>,
 		val emails: List<EmailVo>,
 		val flirts: List<FlirtVo>,
-		val lastTarget: TargetVo?,
-		val spurnedCount: Int = 0
+		// Keeps track of the last hunted target and the huntCount at that time.
+		val lastTarget: String? = null,
+		val spurnedCount: Int = 0,
+		val huntCount: Int = 0,
+		val killCount: Int = 0,
+		val targetKillCount: Int = 0,
+		val innocentKillCount: Int = 0,
+		val whiffCount: Int = 0,
+		val targetWhiffCount: Int = 0,
+		val innocentWhiffCount: Int = 0
 )

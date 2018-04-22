@@ -19,7 +19,7 @@ package ld41.command
 import com.acornui.core.mvc.Command
 import com.acornui.core.mvc.CommandType
 
-class HuntCommand(val targetId: String) : Command {
+class HuntCommand(val targetId: String?) : Command {
 
 	override val type: CommandType<out Command> = Companion
 

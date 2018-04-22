@@ -40,7 +40,7 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 			dataBind.bind {
 				val target = it.first
 				val flirt: FlirtVo = it.second
-				text = if (target?.killed == true) flirt.sBody ?: "" else flirt.fBody ?: ""
+				text = if (target?.killed == true) flirt.sBody!! else flirt.fBody!!
 			}
 		}
 
