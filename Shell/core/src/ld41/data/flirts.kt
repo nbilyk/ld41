@@ -23,10 +23,27 @@ val flirts: List<FlirtVo> = listOf(
 				"You successfully killed your target!  You rock!  This is your positive flirtation experience!",
 				"You failed at killing your target!  You suck!  This is your negative flirtation experience!",
 				"jeff"
+		),
+		FlirtVo(
+				"Successful kill!",
+				"Whiffed kill!",
+				"sam"
+
+		),
+		FlirtVo(
+				"Successful kill!",
+				"Whiffed kill!",
+				"richie"
+
+		),
+		FlirtVo(
+				"Successful kill!",
+				"Whiffed kill!",
+				"dummy"
+
 		)
 )
 
 val initialFlirt: FlirtVo = FlirtVo(
-		"",
-		"This is your first flirt encounter with Waitress.  It's an auto-spurn."
+		fBody = "This is your first flirt encounter with Waitress.  It's an auto-spurn."
 )

@@ -20,5 +20,5 @@ data class EmailVo(
 		val from: String,
 		val subject: String,
 		val body: String,
-		val targetId: String?
+		val targetId: String? = null
 )

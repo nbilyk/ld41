@@ -44,10 +44,8 @@ class EmailView(owned: Owned) : VerticalLayoutContainer(owned) {
 				for (i in 0..it.lastIndex) {
 					val email = it[i]
 					+button("email ${email.subject}") {
-						if (email.targetId != null) {
-							click().add {
-								invokeCommand(HuntCommand(email.targetId))
-							}
+						click().add {
+							invokeCommand(HuntCommand(email.targetId))
 						}
 					}
 				}
