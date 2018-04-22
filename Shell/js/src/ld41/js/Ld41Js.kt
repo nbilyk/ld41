@@ -24,7 +24,7 @@ import com.acornui.js.gl.WebGlApplication
 import ld41.Ld41
 
 fun main(args: Array<String>) {
-	WebGlApplication("ld41Root").start(AppConfig(frameRate = 60, window = WindowConfig(title = "Ld41"), gl = GlConfig(antialias = false))) {
+	WebGlApplication("ld41Root").start(AppConfig(frameRate = 60, window = WindowConfig(title = "Ld41"), gl = GlConfig(antialias = true))) {
 		stage.addElement(Ld41(this)) // Ignore the inspection error, this is because we're mixing module types.
 	}
 }

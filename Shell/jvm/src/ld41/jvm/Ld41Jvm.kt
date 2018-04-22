@@ -10,7 +10,7 @@ import ld41.Ld41
 
 fun main(args: Array<String>) {
 	if (restartJvm()) return
-	LwjglApplication().start(AppConfig(frameRate = 60, window = WindowConfig(title = "Ld41"), gl = GlConfig(antialias = false))) {
+	LwjglApplication().start(AppConfig(frameRate = 60, window = WindowConfig(title = "Ld41"), gl = GlConfig(antialias = true))) {
 		stage.addElement(Ld41(this))
 	}
 }
