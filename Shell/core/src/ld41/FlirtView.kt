@@ -46,7 +46,7 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 		+button("Spurned") {
 			dataBind.bind {
 				val hasWon = it.third
-				visible = hasWon
+				visible = !hasWon
 			}
 			click().add {
 				invokeCommand(SpurnedCommand)
@@ -55,7 +55,6 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 
 		+button("Loved") {
 			dataBind.bind {
-				// TODO: Work off of victory conditions.
 				val hasWon = it.third
 				visible = hasWon
 			}
