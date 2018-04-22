@@ -30,7 +30,7 @@ import ld41.model.TargetVo
 
 class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 
-	val dataBind = DataBinding<Pair<TargetVo?, FlirtVo>>()
+	val dataBind = DataBinding<Triple<TargetVo?, FlirtVo, Boolean>>()
 
 	init {
 
@@ -38,13 +38,16 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 
 		+text{
 			dataBind.bind {
-				val target = it.first
-				val flirt: FlirtVo = it.second
+				val (target, flirt, _) = it
 				text = if (target?.killed == true) flirt.sBody!! else flirt.fBody!!
 			}
 		}
 
 		+button("Spurned") {
+			dataBind.bind {
+				val hasWon = it.third
+				visible = hasWon
+			}
 			click().add {
 				invokeCommand(SpurnedCommand)
 			}
@@ -53,8 +56,8 @@ class FlirtView(owned: Owned) : VerticalLayoutContainer(owned) {
 		+button("Loved") {
 			dataBind.bind {
 				// TODO: Work off of victory conditions.
-				val target = it.first
-				visible = target?.killed ?: false
+				val hasWon = it.third
+				visible = hasWon
 			}
 			click().add {
 				invokeCommand(AcquiescedCommand)

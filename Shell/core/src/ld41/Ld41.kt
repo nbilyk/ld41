@@ -107,7 +107,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		currentView = introView
 
 		cmd.onCommandInvoked(CompleteIntro) {
-			flirtView.dataBind.set(Pair(null, initialFlirt))
+			flirtView.dataBind.set(Triple(null, initialFlirt, false))
 			currentView = flirtView
 		}
 
@@ -183,7 +183,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			} else {
 				getFlirtByTargetId(lastTarget?.id)
 			}
-			flirtView.dataBind.set(Pair(lastTarget,flirt))
+			flirtView.dataBind.set(Triple(lastTarget,flirt,isWinner()))
 			currentView = flirtView
 		}
 
@@ -239,5 +239,9 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			initialFlirt
 		else
 			dataBinding.get()!!.flirts.first { it.targetId == targetId }
+	}
+
+	private fun isWinner(): Boolean {
+		return dataBinding.get()!!.targets.all { it.killed }
 	}
 }
