@@ -30,10 +30,7 @@ import com.acornui.core.mvc.commander
 import com.acornui.core.mvc.invokeCommand
 import com.acornui.core.tween.Tween
 import com.acornui.skins.BasicUiSkin
-import ld41.command.FlirtCommand
-import ld41.command.HuntCommand
-import ld41.command.KillCommand
-import ld41.command.MissCommand
+import ld41.command.*
 import ld41.model.Ld41Vo
 import ld41.model.TargetVo
 import ld41.data.targets
@@ -61,7 +58,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 	private var flirtView: FlirtView
 
-	private var victoryView: VictoryView
+	private var gameOverView: GameOverView
 
 	private var _currentView: UiComponent? = null
 	private var currentView: UiComponent?
@@ -104,7 +101,7 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 
 		flirtView = FlirtView(this) layout { fill() }
 
-		victoryView = VictoryView(this) layout { fill() }
+		gameOverView = GameOverView(this) layout { fill() }
 
 		currentView = introView
 
@@ -175,11 +172,13 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 		}
 
 		cmd.onCommandInvoked(AcquiescedCommand) {
-			currentView = victoryView
+			gameOverView.dataBind.set(true)
+			currentView = gameOverView
 		}
 
 		cmd.onCommandInvoked(FlirtCommand) {
 			val lastTarget = getTargetById(dataBinding.get()!!.lastTarget)
+			// TODO: Clean up with when statement and pull initialFlirt out of getFlirtByTargetId
 			val flirt = if (lastTarget == null && hasStartedHunt) {
 				FlirtVo(fBody = "random terror string")
 			} else {
@@ -187,6 +186,11 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			}
 			flirtView.dataBind.set(Triple(lastTarget,flirt,isWinner()))
 			currentView = flirtView
+		}
+
+		cmd.onCommandInvoked(KillCrushCommand) {
+			gameOverView.dataBind.set(false)
+			currentView = gameOverView
 		}
 
 		stage.keyDown().add {
@@ -224,6 +228,17 @@ class Ld41(owner: Owned) : StackLayoutContainer(owner) {
 			if (it.keyCode == Ascii.K && it.ctrlKey && it.shiftKey) {
 				it.preventDefault()
 				invokeCommand(KillCommand(getTargetById("joe")))
+			}
+		}
+		keyDown().add {
+			if (it.keyCode == Ascii.K && it.ctrlKey && it.shiftKey && it.altKey) {
+				it.preventDefault()
+				dataBinding {
+					it.copy(
+							targets = dataBinding.get()!!.targets.map { it.copy(killed = true) }
+					)
+				}
+				invokeCommand(FlirtCommand())
 			}
 		}
 	}

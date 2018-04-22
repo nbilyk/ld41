@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package ld41
+package ld41.command
 
-import com.acornui.component.layout.algorithm.CanvasLayoutContainer
-import com.acornui.component.text.text
-import com.acornui.core.di.Owned
+import com.acornui.core.mvc.Command
+import com.acornui.core.mvc.CommandType
 
-class VictoryView(owned: Owned) : CanvasLayoutContainer(owned) {
+class KillCrushCommand() : Command {
 
-	init {
-		+text("Victory")
-	}
+	override val type: CommandType<out Command> = Companion
 
+	companion object : CommandType<KillCrushCommand>
 }
